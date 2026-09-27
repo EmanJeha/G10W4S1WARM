@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Test Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#F3F9FF; --paper:#FFFFFF; --ink:#18223D; --muted:#55627E; --line:#D7E4F1;
+    --sun:#FFCE3A; --sun-soft:#FFF4CC; --sun-dk:#E0AC00; --sun-ink:#6B4F00;
+    --turq:#16C0B0; --turq-soft:#D6F7F3; --turq-dk:#0B9486;
+    --coral:#FF6B57; --coral-soft:#FFE6E1; --coral-dk:#D9493A;
+    --sky:#4DA8FF; --sky-soft:#DDEEFF; --sky-dk:#1F7FD6;
+    --grape:#9F6BFF; --grape-soft:#EEE6FF; --grape-dk:#7442E0;
+    --alpha:#FF5FA2; --alpha-soft:#FFE3F0; --alpha-dk:#D63A7E;
+    --beta:#2F80ED; --beta-soft:#DEEBFF; --beta-dk:#1E5FC0;
+    --ok:#22C55E; --ok-soft:#DCFCE7; --ok-dk:#15803D;
+    --bad:#EF4444; --bad-soft:#FEE2E2; --bad-dk:#B91C1C;
+    --code-bg:#F7FAFF; --kw:#7C3AED; --fn:#0369A1; --str:#C2410C; --num:#15803D; --cm:#8A94A8;
+    --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+    --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    --stripe:repeating-linear-gradient(-45deg, var(--sun) 0 14px, var(--ink) 14px 28px);
+  }
+  *{box-sizing:border-box}
+  html,body{min-height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5;
+    background-image:
+      radial-gradient(circle at 6% 10%, #FFF4CC 0, transparent 30%),
+      radial-gradient(circle at 94% 6%, #D6F7F3 0, transparent 30%),
+      radial-gradient(circle at 90% 96%, #FFE6E1 0, transparent 28%),
+      radial-gradient(circle at 4% 94%, #DDEEFF 0, transparent 26%),
+      radial-gradient(#CADAEB 1.2px, transparent 1.3px);
+    background-size:auto,auto,auto,auto,22px 22px; background-attachment:fixed;
+  }
+  [hidden]{display:none!important}
+  .wrap{max-width:1180px; margin:0 auto; padding-inline:16px; padding-block:14px 40px}
+  button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
+  button:focus-visible, input:focus-visible{outline:3px solid var(--beta); outline-offset:3px}
+  button[disabled]{cursor:default}
+
+  .top{display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; justify-content:space-between; margin-bottom:16px}
+  .brand{display:flex; align-items:center; gap:10px}
+  .logo{width:46px; height:46px; border-radius:14px; background:var(--sun); display:grid; place-items:center; transform:rotate(-6deg); box-shadow:0 4px 0 var(--sun-dk)}
+  .logo svg{width:30px; height:30px}
+  .brand h1{font-family:var(--display); font-weight:800; font-size:30px; line-height:1; margin:0; letter-spacing:-.5px}
+  .brand small{display:block; font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .scores{display:flex; gap:10px; flex-wrap:wrap}
+  .team{position:relative; display:flex; align-items:center; gap:10px; padding:6px 8px 6px 14px; border-radius:999px; background:var(--paper); border:2px solid var(--line); transition:transform .25s, box-shadow .25s}
+  .team .nm{font-weight:800; font-size:15px; max-width:12ch; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .team .pt{font-family:var(--display); font-weight:800; font-size:22px; min-width:52px; text-align:center; padding:0 10px; border-radius:999px; color:#fff; font-variant-numeric:tabular-nums; line-height:1.5}
+  .team.a .pt{background:var(--alpha)} .team.b .pt{background:var(--beta)}
+  .team.turn{transform:translateY(-2px)}
+  .team.a.turn{border-color:var(--alpha); box-shadow:0 0 0 4px var(--alpha-soft)}
+  .team.b.turn{border-color:var(--beta); box-shadow:0 0 0 4px var(--beta-soft)}
+  .team .yt{position:absolute; left:50%; bottom:-11px; transform:translateX(-50%); font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:1px 8px; border-radius:999px; color:#fff; white-space:nowrap}
+  .team.a .yt{background:var(--alpha)} .team.b .yt{background:var(--beta)}
+  .bump{animation:bump .5s ease}
+  @keyframes bump{30%{transform:scale(1.3)}}
+  .tools{display:flex; gap:8px}
+  .iconbtn{width:40px; height:40px; border-radius:12px; background:var(--paper); border:2px solid var(--line); display:grid; place-items:center}
+  .iconbtn svg{width:20px; height:20px}
+
+  .rail{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px}
+  .chip{display:flex; align-items:center; gap:8px; padding:6px 14px; border-radius:999px; background:var(--paper); border:2px solid var(--line); font-weight:800; font-size:13px; color:var(--muted)}
+  .chip i{width:10px; height:10px; border-radius:50%; background:var(--line)}
+  .chip.on{color:var(--ink); border-color:var(--ink)} .chip.on i{background:var(--sun)}
+  .chip.done{color:var(--ok-dk)} .chip.done i{background:var(--ok)}
+
+  .card{background:var(--paper); border-radius:24px; border:2px solid var(--line); box-shadow:0 10px 0 -2px #D7E5F3; position:relative; overflow:hidden}
+  .card::before{content:""; position:absolute; left:0; right:0; top:0; height:10px; background:var(--stripe)}
+  .stage{padding:34px 28px 28px; min-height:560px; display:flex; flex-direction:column}
+  @media (max-width:560px){ .stage{padding:28px 20px 20px} }
+
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:14px; font-weight:800; font-size:17px; transition:transform .12s, box-shadow .12s}
+  .btn:active{transform:translateY(3px)}
+  .btn.go{background:var(--sun); color:var(--ink); box-shadow:0 5px 0 var(--sun-dk)}
+  .btn.ink{background:var(--ink); color:#fff; box-shadow:0 5px 0 #0A1226}
+  .btn.ghost{background:var(--paper); border:2px solid var(--line); color:var(--muted)}
+  .btn.big{font-size:22px; padding:16px 34px; border-radius:18px}
+  .row{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+
+  .eyebrow{font-weight:800; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .hero{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px; align-items:center}
+  @media (max-width:760px){ .hero{grid-template-columns:1fr} .hero .car{display:none} }
+  .hero-title{font-family:var(--display); font-weight:800; font-size:clamp(46px,7.6vw,84px); line-height:.92; margin:6px 0 10px; letter-spacing:-2px}
+  .hero-title span{background:var(--stripe); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-stroke:2px var(--ink)}
+  .lead-p{font-size:18px; color:var(--muted); max-width:56ch; margin:0 0 18px}
+  .car{width:200px; animation:drive 3s ease-in-out infinite}
+  @keyframes drive{50%{transform:translateX(10px) rotate(-1deg)}}
+  .rounds-list{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:6px 0 18px}
+  @media (max-width:680px){ .rounds-list{grid-template-columns:1fr} }
+  .rcard{border-radius:16px; padding:14px 16px; border:2px solid var(--line); display:flex; flex-direction:column; gap:4px}
+  .rcard b{font-family:var(--display); font-size:20px; line-height:1.1}
+  .rcard span{font-size:14px; color:var(--muted)}
+  .rcard em{font-style:normal; font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase}
+  .rc1{background:var(--turq-soft); border-color:#A6EDE4} .rc1 em{color:var(--turq-dk)}
+  .rc2{background:var(--coral-soft); border-color:#FFC6BD} .rc2 em{color:var(--coral-dk)}
+  .rc3{background:var(--sun-soft); border-color:#FFE48A} .rc3 em{color:var(--sun-ink)}
+  .names{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; max-width:520px}
+  @media (max-width:480px){ .names{grid-template-columns:1fr} }
+  .names label{display:flex; flex-direction:column; gap:4px; font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .names input{font:inherit; font-size:18px; font-weight:800; padding:10px 14px; border-radius:12px; border:2px solid var(--line); color:var(--ink); background:var(--paper); width:100%}
+  #nameA{border-color:var(--alpha)} #nameB{border-color:var(--beta)}
+
+  .qhead{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:14px}
+  .tag{display:inline-block; font-weight:800; font-size:13px; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:999px}
+  .qhead h2{font-family:var(--display); font-weight:800; font-size:30px; line-height:1.05; margin:6px 0 0}
+  .count{font-size:14px; font-weight:700; color:var(--muted)}
+  .ptbadge{display:inline-block; margin-left:8px; font-weight:800; font-size:13px; padding:3px 10px; border-radius:999px; background:var(--ink); color:#fff}
+
+  .turnbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 16px; border-radius:14px; font-weight:800; font-size:18px; margin-bottom:16px}
+  .turnbar.a{background:var(--alpha-soft); color:var(--alpha-dk)} .turnbar.b{background:var(--beta-soft); color:var(--beta-dk)}
+  .turnbar.both{background:var(--sun-soft); color:var(--sun-ink)}
+  .turnbar .steal{background:var(--bad); color:#fff; padding:2px 12px; border-radius:999px; font-size:14px; letter-spacing:.06em; text-transform:uppercase}
+  .turnbar .done{background:var(--ink); color:#fff; padding:2px 12px; border-radius:999px; font-size:14px}
+
+  .timer{position:relative; width:70px; height:70px; flex:none; cursor:pointer}
+  .timer svg{width:100%; height:100%; transform:rotate(-90deg)}
+  .timer .trk{fill:none; stroke:var(--line); stroke-width:8}
+  .timer .val{fill:none; stroke:var(--ok); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .25s linear, stroke .3s}
+  .timer .num{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--display); font-weight:800; font-size:24px; font-variant-numeric:tabular-nums}
+  .timer.warn .val{stroke:var(--sun)} .timer.out .val{stroke:var(--bad)} .timer.out .num{color:var(--bad)}
+  .timer .pz{position:absolute; bottom:-18px; left:0; right:0; text-align:center; font-size:11px; font-weight:800; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
+
+  @keyframes drop{from{transform:translateY(-20px); opacity:0}}
+  @keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+
+  /* Round 1: Inspection Line */
+  .product{display:flex; gap:18px; align-items:center; margin:2px auto 20px; max-width:760px; width:100%; padding:18px 22px; border-radius:22px; border:3px solid var(--ink); box-shadow:0 8px 0 var(--ink); background:var(--paper); animation:drop .45s cubic-bezier(.3,1.6,.5,1) both}
+  .product .ic{flex:none; width:76px; height:76px; border-radius:20px; display:grid; place-items:center; background:var(--sky-soft)}
+  .product .ic svg{width:48px; height:48px; color:var(--sky-dk)}
+  .product small{display:block; font-weight:800; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  .product p{margin:2px 0 0; font-family:var(--display); font-weight:700; font-size:clamp(22px,2.9vw,31px); line-height:1.15; text-wrap:balance}
+  .bins{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
+  @media (max-width:760px){ .bins{grid-template-columns:1fr 1fr} }
+  .bin{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 10px 14px; border-radius:20px; color:#fff; font-family:var(--display); font-weight:800; font-size:clamp(19px,2.2vw,24px); line-height:1.05; text-align:center; transition:transform .12s, opacity .2s, box-shadow .2s}
+  .bin:hover:not([disabled]){transform:translateY(-3px)}
+  .bin svg{width:40px; height:40px}
+  .bin small{font-family:var(--body); font-size:13px; font-weight:700; opacity:.9}
+  .bin.safety{background:var(--coral); box-shadow:0 6px 0 var(--coral-dk)}
+  .bin.comfort{background:var(--grape); box-shadow:0 6px 0 var(--grape-dk)}
+  .bin.eff{background:var(--turq); box-shadow:0 6px 0 var(--turq-dk)}
+  .bin.func{background:var(--sky); box-shadow:0 6px 0 var(--sky-dk)}
+  .bin.right{box-shadow:0 6px 0 var(--ink), 0 0 0 6px var(--ok-soft); outline:3px solid var(--ink)}
+  .bin.wrong{opacity:.3; animation:shake .4s}
+  .bin.dim{opacity:.35}
+
+  /* Round 2: Bug Hunt */
+  .hunt{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:18px; align-items:start}
+  @media (max-width:860px){ .hunt{grid-template-columns:1fr} }
+  .filetab{display:inline-flex; gap:8px; align-items:center; font-family:var(--mono); font-size:13px; font-weight:700; color:var(--muted); background:var(--code-bg); border:2px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; padding:4px 14px; margin-left:14px}
+  .codebox{background:var(--code-bg); border:2px solid var(--line); border-radius:18px; border-top-left-radius:6px; padding:10px 8px; overflow-x:auto}
+  .ln{display:flex; width:100%; align-items:center; gap:12px; padding:6px 10px; border-radius:10px; font-family:var(--mono); font-size:clamp(16px,2vw,21px); line-height:1.4; text-align:left; white-space:pre; border:2px solid transparent; transition:background .15s, border-color .15s}
+  .ln:hover:not([disabled]){background:var(--sun-soft); border-color:var(--sun)}
+  .ln .no{flex:none; width:22px; text-align:right; color:var(--cm); font-size:.8em; user-select:none}
+  .ln.miss{background:var(--bad-soft); border-color:var(--bad); animation:shake .4s}
+  .ln.miss .src{text-decoration:line-through; text-decoration-color:var(--bad)}
+  .ln.found{background:var(--ok-soft); border-color:var(--ok)}
+  .ln.fixline{background:var(--ok-soft); border-color:transparent; color:var(--ok-dk)}
+  .ln.fixline .no{color:var(--ok-dk); font-weight:800}
+  .ln .kw{color:var(--kw); font-weight:700} .ln .fn{color:var(--fn); font-weight:700} .ln .s{color:var(--str)} .ln .n{color:var(--num); font-weight:700} .ln .cm{color:var(--cm); font-style:italic}
+  .mission{border-radius:20px; background:var(--coral-soft); padding:16px 18px; display:grid; gap:8px}
+  .mission h3{margin:0; font-family:var(--display); font-weight:800; font-size:22px; color:var(--coral-dk); line-height:1.1}
+  .mission p{margin:0; font-weight:700; font-size:17px}
+  .mission .want{font-size:15px; color:var(--muted); font-weight:700}
+  .bugcount{display:inline-flex; align-items:center; gap:8px; font-weight:800; font-size:14px; color:var(--coral-dk)}
+  .bugcount svg{width:22px; height:22px}
+
+  /* Round 3: Buzzer */
+  .statement{margin:0 auto 20px; max-width:820px; width:100%; text-align:center; padding:26px 26px; border-radius:24px; background:var(--sun-soft); border:3px dashed var(--sun-dk); animation:drop .45s ease both}
+  .statement small{font-weight:800; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--sun-ink)}
+  .statement p{margin:6px 0 0; font-family:var(--display); font-weight:700; font-size:clamp(26px,3.6vw,40px); line-height:1.12; text-wrap:balance}
+  .statement code{font-family:var(--mono); font-size:.8em; background:var(--paper); padding:0 .3em; border-radius:8px}
+  .buzzers{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .buzz{position:relative; border-radius:28px; padding:22px 14px; color:#fff; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:var(--display); font-weight:800; font-size:clamp(24px,3vw,34px); line-height:1; transition:transform .1s, box-shadow .1s, opacity .2s}
+  .buzz small{font-family:var(--body); font-size:13px; font-weight:800; letter-spacing:.08em; opacity:.9}
+  .buzz kbd{font-family:var(--mono); font-size:14px; background:rgba(255,255,255,.28); border-radius:6px; padding:1px 8px}
+  .buzz.a{background:var(--alpha); box-shadow:0 10px 0 var(--alpha-dk)}
+  .buzz.b{background:var(--beta); box-shadow:0 10px 0 var(--beta-dk)}
+  .buzz:active:not([disabled]), .buzz.hit{transform:translateY(8px); box-shadow:0 2px 0 var(--ink)}
+  .buzz.hit{outline:5px solid var(--sun); outline-offset:4px}
+  .buzz[disabled]:not(.hit){opacity:.3}
+  .tf{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px}
+  .tfb{padding:18px 10px; border-radius:20px; font-family:var(--display); font-weight:800; font-size:30px; line-height:1; border:3px solid var(--line); background:var(--paper); box-shadow:0 6px 0 var(--line); transition:transform .12s, background .2s, border-color .2s, opacity .2s}
+  .tfb:hover:not([disabled]){transform:translateY(-2px); border-color:var(--ink)}
+  .tfb.t{color:var(--ok-dk)} .tfb.f{color:var(--bad-dk)}
+  .tfb.right{background:var(--ok-soft); border-color:var(--ok); box-shadow:0 6px 0 var(--ok)}
+  .tfb.wrong{background:var(--bad-soft); border-color:var(--bad); box-shadow:0 6px 0 var(--bad); animation:shake .4s}
+
+  .explain{margin-top:16px; padding:14px 18px; border-radius:16px; font-size:17px; font-weight:600; animation:drop .35s ease both}
+  .explain.ok{background:var(--ok-soft); color:#14532D}
+  .explain.no{background:var(--bad-soft); color:#7F1D1D}
+  .explain b{font-family:var(--display); font-size:20px; margin-right:6px}
+  .explain code{font-family:var(--mono); font-weight:700; font-size:.92em}
+
+  .spacer{flex:1; min-height:18px}
+  .foot{margin-top:20px; padding-top:16px; border-top:2px dashed var(--line); display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .foot .hint{font-weight:700; font-size:14px; color:var(--muted)}
+
+  .center{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px}
+  .bignum{font-family:var(--display); font-weight:800; font-size:120px; line-height:.9; letter-spacing:-4px}
+  .center h2{font-family:var(--display); font-weight:800; font-size:clamp(34px,5vw,52px); line-height:1; margin:0; text-wrap:balance}
+  .center p{font-size:19px; color:var(--muted); max-width:48ch; margin:0 0 10px}
+  .podium{display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:6px 0 8px}
+  .pod{min-width:170px; padding:14px 20px; border-radius:20px; border:3px solid var(--line)}
+  .pod .n{font-weight:800; font-size:16px}
+  .pod .s{font-family:var(--display); font-weight:800; font-size:50px; line-height:1}
+  .pod.a{border-color:var(--alpha); color:var(--alpha-dk); background:var(--alpha-soft)}
+  .pod.b{border-color:var(--beta); color:var(--beta-dk); background:var(--beta-soft)}
+  .pod.win{transform:scale(1.08); box-shadow:0 0 0 5px var(--sun)}
+  .crown{font-family:var(--display); font-weight:800; font-size:14px; letter-spacing:.1em; text-transform:uppercase; background:var(--sun); color:var(--ink); padding:2px 10px; border-radius:999px; display:inline-block; margin-bottom:6px}
+  .bridge{margin-top:8px; padding:16px 22px; border-radius:18px; background:var(--sun-soft); border:3px solid var(--sun); font-weight:700; font-size:18px; max-width:58ch; position:relative}
+  .bridge b{font-family:var(--display); font-size:22px; display:block; margin-bottom:2px}
+
+  #fx{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:50}
+  .toast{position:absolute; top:22px; left:50%; transform:translateX(-50%); font-family:var(--display); font-weight:800; font-size:26px; padding:6px 22px; border-radius:999px; background:var(--ok); color:#fff; animation:pop 1.3s ease forwards; pointer-events:none; white-space:nowrap; z-index:5}
+  @keyframes pop{0%{opacity:0; transform:translate(-50%,10px) scale(.8)}15%{opacity:1; transform:translate(-50%,0) scale(1.05)}80%{opacity:1}100%{opacity:0; transform:translate(-50%,-10px)}}
+  @media (prefers-reduced-motion: reduce){ *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important} }
+</style>
+</head>
+<body>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#18223D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15.5V13l2-4.5A2 2 0 0 1 6.8 7.3h10.4A2 2 0 0 1 19 8.5l2 4.5v2.5a1 1 0 0 1-1 1h-1.2M5.2 16.5H4a1 1 0 0 1-1-1"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><path d="M9.5 16.5h5M4 12.5h16"/></svg></div>
+      <div><small>Grade 10 · Sprint 1.4 Test Cases · Warm-up</small><h1>Test Drive</h1></div>
+    </div>
+    <div class="scores" aria-live="polite">
+      <div class="team a" id="teamA"><span class="nm" id="lblA">Team Alpha</span><span class="pt" id="scA">0</span><span class="yt" id="ytA" hidden>Your turn</span></div>
+      <div class="team b" id="teamB"><span class="nm" id="lblB">Team Beta</span><span class="pt" id="scB">0</span><span class="yt" id="ytB" hidden>Your turn</span></div>
+    </div>
+    <div class="tools">
+      <button class="iconbtn" id="soundBtn" title="Sound on/off" aria-label="Sound on/off"></button>
+      <button class="iconbtn" id="fsBtn" title="Full screen" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="iconbtn" id="homeBtn" title="Restart game" aria-label="Restart game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+  </header>
+  <nav class="rail" id="rail" aria-label="Rounds"></nav>
+  <main class="card stage" id="stage"></main>
+</div>
+
+<script>
+(() => {
+  const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const hl = line => {
+    let cm = ''; const h = line.indexOf('#');
+    if (h >= 0) { cm = line.slice(h); line = line.slice(0, h); }
+    const parts = line.split(/("[^"]*")/);
+    return parts.map((p, i) => i % 2 ? `<span class="s">${esc(p)}</span>` :
+      esc(p).replace(/\b(def|return|if|elif|else|for|in|import)\b/g, '<span class="kw">$1</span>')
+            .replace(/\b(print|input|int|range|random\.randint|ask_question)\b/g, '<span class="fn">$1</span>')
+            .replace(/(^|[^\w.])(\d+)\b/g, '$1<span class="n">$2</span>')
+    ).join('') + (cm ? `<span class="cm">${esc(cm)}</span>` : '');
+  };
+
+  /* ---------- Icons ---------- */
+  const I = {
+    car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15.5V13l2-4.5A2 2 0 0 1 6.8 7.3h10.4A2 2 0 0 1 19 8.5l2 4.5v2.5a1 1 0 0 1-1 1h-1.2M5.2 16.5H4a1 1 0 0 1-1-1"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><path d="M9.5 16.5h5"/></svg>',
+    phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>',
+    chair:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h8a2 2 0 0 1 2 2v7H5v-7a2 2 0 0 1 2-2z"/><path d="M4 12.5h14M6 12.5v8M16 12.5v8M17 12.5l3 8"/></svg>',
+    app:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 9.5h3M9.5 8v3M13.5 9.5h3M8 15l3-1.5M13.5 14h3M13.5 16h3"/></svg>',
+    bus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="14" rx="2.5"/><path d="M4 10.5h16M7.5 20.5v-3M16.5 20.5v-3"/><circle cx="8" cy="14" r=".6" fill="currentColor"/><circle cx="16" cy="14" r=".6" fill="currentColor"/></svg>',
+    game:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10a4 4 0 0 1 3.9 4.9l-.8 3.5a2.2 2.2 0 0 1-3.8 1L14.5 15h-5l-1.8 2.4a2.2 2.2 0 0 1-3.8-1l-.8-3.5A4 4 0 0 1 7 8z"/><path d="M8 10.5v3M6.5 12h3M15.5 11h.01M17.5 13h.01"/></svg>',
+    shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-3 7.8-7 9.5-4-1.7-7-5.1-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+    sofa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM6 18v2M18 18v2"/></svg>',
+    leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 15-14-1 10-6 15-14 15"/><path d="M5 19l7-7"/></svg>',
+    gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 7l2.6 1.5M17.2 15.5l2.6 1.5M4.2 17l2.6-1.5M17.2 8.5l2.6-1.5"/></svg>',
+    bug:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="13.5" rx="5" ry="6"/><path d="M12 7.5v12M9 5l1.5 2M15 5l-1.5 2M7 11H4M20 11h-3M7 15H4M20 15h-3"/></svg>',
+  };
+
+  /* ---------- Content ---------- */
+  const BINS = [
+    { id:'safety',  name:'Safety',            sub:'Will anyone get hurt?',   icon:I.shield },
+    { id:'comfort', name:'Comfort',           sub:'Is it pleasant to use?',  icon:I.sofa },
+    { id:'eff',     name:'Efficiency',        sub:'Fuel, battery, speed',    icon:I.leaf },
+    { id:'func',    name:'Functionality',     sub:'Does it do its job?',     icon:I.gear },
+  ];
+  const TESTS = [
+    { ic:'car',   what:'New car', t:'Crash it into a wall to check the airbags open.', a:'safety', why:'Crash tests protect the people inside: safety.' },
+    { ic:'car',   what:'New car', t:'Drive 100 km and measure how much fuel it uses.', a:'eff', why:'Fuel used per distance is fuel efficiency.' },
+    { ic:'chair', what:'Car seat', t:'Sit in it for a 3-hour road trip. Any back pain?', a:'comfort', why:'How it feels over a long time is comfort.' },
+    { ic:'app',   what:'Calculator app', t:'Type 12 + 30 and check that it shows 42.', a:'func', why:'Checking that it does its job correctly is functionality. This is what software tests do!' },
+    { ic:'phone', what:'New phone', t:'Play videos until the battery dies. How many hours?', a:'eff', why:'Battery life measures how efficiently the phone uses energy.' },
+    { ic:'bus',   what:'School bus', t:'Check that the emergency door opens easily.', a:'safety', why:'Getting out fast in an emergency is about safety.' },
+    { ic:'game',  what:'Math Quiz game', t:'Answer a question correctly and check the score goes up.', a:'func', why:'That’s a functionality test for our own Math Quiz game. Today we write tests like this!' },
+    { ic:'phone', what:'New phone', t:'Is the screen easy to read and the buttons easy to press?', a:'comfort', why:'Ease and pleasure of use is comfort (usability).' },
+  ];
+  const BUGS = [
+    { title:'Check the answer', goal:'Say “Correct!” when the player’s answer is right.',
+      lines:['correct = 7','answer = int(input("3 + 4 = "))','if answer = correct:','    print("Correct!")'], bug:[2], fix:'if answer == correct:',
+      why:'A single <code>=</code> stores a value. To <b>compare</b> two values, Python needs <code>==</code>.' },
+    { title:'Keep score', goal:'Add 1 point to the score for a correct answer.',
+      lines:['score = 0','answer = int(input("5 + 2 = "))','if answer == 7:','    score = score - 1','    print("Correct! Score:", score)'], bug:[3], fix:'    score = score + 1',
+      why:'A correct answer should <b>add</b> a point, but this line takes one away.' },
+    { title:'Addition question', goal:'Ask an addition question with two random numbers.',
+      lines:['import random','number_1 = random.randint(1, 10)','number_2 = random.randint(1, 10)','print("What is", number_1, "+", number_2, "?")','correct = number_1 - number_2'], bug:[4], fix:'correct = number_1 + number_2',
+      why:'The question says <b>+</b> but the answer is worked out with <b>−</b>. Every correct answer would be marked wrong!' },
+    { title:'Read the answer', goal:'Compare the player’s answer with the correct number.',
+      lines:['correct = 12','answer = input("6 + 6 = ")','if answer == correct:','    print("Correct!")'], bug:[1], fix:'answer = int(input("6 + 6 = "))',
+      why:'<code>input()</code> gives text, like <code>"12"</code>. Text never equals the number 12, so wrap it in <code>int()</code>.' },
+    { title:'Five questions', goal:'Ask the player exactly 5 questions.',
+      lines:['# ask the player 5 questions','for question in range(1, 5):','    ask_question()'], bug:[1], fix:'for question in range(1, 6):',
+      why:'<code>range(1, 5)</code> counts 1, 2, 3, 4: only <b>4</b> questions. The end number is not included.' },
+    { title:'Give feedback', goal:'Say “Well done!” for a right answer, “Try again!” for a wrong one.',
+      lines:['if answer == correct:','    print("Try again!")','else:','    print("Well done!")'], bug:[1, 3], fix:'    print("Well done!")',
+      why:'The two messages are swapped, so right answers hear “Try again!”. Either print line counts as finding the bug.' },
+  ];
+  const FACTS = [
+    { t:'Cars are tested for safety before they are sold.', a:true, why:'New cars go through crash tests, brake tests and more before reaching customers.' },
+    { t:'If a program runs without crashing, it has no bugs.', a:false, why:'A program can run smoothly and still give wrong answers. That’s why we test the results.' },
+    { t:'Before running a test, we should decide what result we <b>expect</b>.', a:true, why:'Without an expected result, you can’t tell if the actual result is right or wrong.' },
+    { t:'In Python, <code>==</code> checks if two values are equal.', a:true, why:'<code>==</code> compares. A single <code>=</code> stores a value in a variable.' },
+    { t:'Testing with normal inputs only is enough.', a:false, why:'Unusual inputs like 0, negative numbers or wrong symbols often reveal hidden bugs.' },
+    { t:'Programmers should test their code only once, at the very end.', a:false, why:'Testing little and often catches bugs early, when they are easier to fix.' },
+    { t:'A bug is a mistake in a program that makes it behave in the wrong way.', a:true, why:'Finding bugs before the customer does is the whole point of testing.' },
+    { t:'Only software gets tested. Physical products don’t need it.', a:false, why:'Cars, phones, medicines and even chairs are all tested before they are sold.' },
+  ];
+
+  const ROUNDS = [
+    { id:'insp', tag:'Round 1', name:'Inspection Line', pts:10, time:20, cls:'rc1', bg:'var(--turq)',  ink:'#fff', count:TESTS.length + ' product tests',
+      blurb:'A product rolls in with a test. Is it checking Safety, Comfort, Efficiency or Functionality?' },
+    { id:'bug',  tag:'Round 2', name:'Bug Hunt', pts:20, time:40, cls:'rc2', bg:'var(--coral)', ink:'#fff', count:BUGS.length + ' buggy snippets',
+      blurb:'Our Math Quiz game has bugs! Tap the one line of code that breaks the program.' },
+    { id:'buzz', tag:'Round 3', name:'Buzzer Blitz', pts:10, time:0, cls:'rc3', bg:'var(--sun)', ink:'var(--ink)', count:FACTS.length + ' statements',
+      blurb:'True or false? Hit your buzzer first to answer. Wrong answer hands it to the other team.' },
+  ];
+
+  /* ---------- State ---------- */
+  const S = { screen:'intro', r:0, i:0, turn:'a', firstTurn:'a', steal:false, done:false, score:{a:0,b:0},
+              names:{a:'Team Alpha', b:'Team Beta'}, sound:true, order:[], buzzed:null, locked:[] };
+  const $ = id => document.getElementById(id);
+  const stage = $('stage');
+  const other = t => t === 'a' ? 'b' : 'a';
+
+  /* ---------- Sound ---------- */
+  let ac;
+  const tone = (f, d = .12, type = 'sine', when = 0, vol = .12) => {
+    if (!S.sound) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + when;
+      o.type = type; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d + .02);
+    } catch (e) {}
+  };
+  const sfx = {
+    good(){ [523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',i*.08)); },
+    bad(){ tone(220,.25,'sawtooth',0,.08); tone(165,.3,'sawtooth',.12,.08); },
+    buzz(){ tone(180,.35,'square',0,.12); tone(185,.35,'sawtooth',0,.06); },
+    horn(){ tone(392,.18,'square',0,.07); tone(494,.22,'square',.2,.07); },
+    squash(){ tone(900,.05,'square',0,.06); tone(300,.12,'triangle',.04,.1); },
+    click(){ tone(600,.05,'triangle',0,.08); },
+    steal(){ [880,660,880,660].forEach((f,i)=>tone(f,.09,'square',i*.09,.05)); },
+    tick(){ tone(880,.05,'square',0,.04); },
+    fanfare(){ [392,523,659,784,659,784,1047].forEach((f,i)=>tone(f,.22,'triangle',i*.12,.1)); },
+  };
+  const soundIcon = () => $('soundBtn').innerHTML = S.sound
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+
+  /* ---------- Confetti ---------- */
+  const cv = $('fx'), cx = cv.getContext('2d'); let parts = [], raf = 0;
+  const fit = () => { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; };
+  addEventListener('resize', fit); fit();
+  const COLORS = ['#FFCE3A','#16C0B0','#FF6B57','#4DA8FF','#9F6BFF','#FF5FA2'];
+  const burst = (n = 90, x = innerWidth/2, y = innerHeight/3) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (let i = 0; i < n; i++) parts.push({ x, y, vx:(Math.random()-.5)*14, vy:Math.random()*-12-3, s:6+Math.random()*7, c:COLORS[i%COLORS.length], r:Math.random()*6, vr:(Math.random()-.5)*.3, life:120+Math.random()*40, round: Math.random() < .25 });
+    if (!raf) loop();
+  };
+  const loop = () => {
+    const d = devicePixelRatio; cx.clearRect(0,0,cv.width,cv.height);
+    parts = parts.filter(p => p.life-- > 0 && p.y < innerHeight + 40);
+    parts.forEach(p => {
+      p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      cx.save(); cx.translate(p.x*d, p.y*d); cx.rotate(p.r); cx.fillStyle = p.c;
+      if (p.round){ cx.beginPath(); cx.arc(0, 0, p.s*d*.5, 0, 6.3); cx.fill(); } else cx.fillRect(-p.s*d/2, -p.s*d/4, p.s*d, p.s*d/2);
+      cx.restore();
+    });
+    raf = parts.length ? requestAnimationFrame(loop) : (cx.clearRect(0,0,cv.width,cv.height), 0);
+  };
+  const toast = (txt, bg) => { const t = document.createElement('div'); t.className = 'toast'; t.textContent = txt; if (bg) t.style.background = bg; stage.appendChild(t); setTimeout(() => t.remove(), 1400); };
+  const teamColor = t => t === 'a' ? 'var(--alpha)' : 'var(--beta)';
+
+  /* ---------- Timer ---------- */
+  let tLeft = 0, tMax = 0, tRun = false, tInt = 0;
+  const C = 2 * Math.PI * 30;
+  const timerHTML = () => `<div class="timer" id="timer" title="Click to pause or resume" role="timer"><svg viewBox="0 0 70 70"><circle class="trk" cx="35" cy="35" r="30"/><circle class="val" id="tVal" cx="35" cy="35" r="30" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><div class="num" id="tNum"></div><div class="pz" id="tPz"></div></div>`;
+  const drawTimer = () => {
+    const el = $('timer'); if (!el) return;
+    $('tNum').textContent = Math.ceil(tLeft);
+    $('tVal').style.strokeDashoffset = C * (1 - tLeft / tMax);
+    el.classList.toggle('warn', tLeft <= 5 && tLeft > 0); el.classList.toggle('out', tLeft <= 0);
+    $('tPz').textContent = tLeft <= 0 ? 'time!' : (tRun || S.done ? '' : 'paused');
+  };
+  const startTimer = secs => {
+    clearInterval(tInt); if (!secs || !$('timer')) return;
+    tMax = tLeft = secs; tRun = true; drawTimer();
+    $('timer').onclick = () => { if (tLeft > 0 && !S.done) { tRun = !tRun; drawTimer(); } };
+    tInt = setInterval(() => {
+      if (!tRun) return;
+      tLeft = Math.max(0, tLeft - .25);
+      if (tLeft <= 5 && tLeft > 0 && tLeft % 1 === 0) sfx.tick();
+      if (tLeft <= 0) { tRun = false; clearInterval(tInt); sfx.bad(); }
+      drawTimer();
+    }, 250);
+  };
+  const stopTimer = () => { tRun = false; clearInterval(tInt); drawTimer(); };
+
+  /* ---------- Scores / turn ---------- */
+  const paintScores = bump => {
+    $('scA').textContent = S.score.a; $('scB').textContent = S.score.b;
+    $('lblA').textContent = S.names.a; $('lblB').textContent = S.names.b;
+    const live = S.screen === 'q' && !S.done && (S.r !== 2 || S.buzzed);
+    $('teamA').classList.toggle('turn', live && S.turn === 'a'); $('teamB').classList.toggle('turn', live && S.turn === 'b');
+    $('ytA').hidden = !(live && S.turn === 'a'); $('ytB').hidden = !(live && S.turn === 'b');
+    if (bump) { const el = $(bump === 'a' ? 'scA' : 'scB'); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  };
+  const addPts = (t, n) => { S.score[t] += n; paintScores(t); };
+  const turnBar = () => {
+    let extra = '';
+    if (S.done) extra = '<span class="done">Answer locked</span>';
+    else if (S.steal) extra = '<span class="steal">Steal for half points</span>';
+    return `<div class="turnbar ${S.turn}" id="turnbar"><span>${esc(S.names[S.turn])}, your turn!</span>${extra}</div>`;
+  };
+  const refreshTurnBar = () => { const tb = $('turnbar'); if (tb) tb.outerHTML = turnBar(); paintScores(); };
+
+  const paintRail = () => {
+    $('rail').innerHTML = ROUNDS.map((R, i) => {
+      let st = '';
+      if (S.screen === 'final' || (S.screen !== 'intro' && i < S.r)) st = 'done';
+      else if (S.screen !== 'intro' && i === S.r) st = 'on';
+      return `<span class="chip ${st}"><i></i>${R.tag} · ${R.name}</span>`;
+    }).join('');
+  };
+
+  /* ---------- Screens ---------- */
+  const render = () => {
+    paintRail(); paintScores();
+    if (S.screen === 'intro') return renderIntro();
+    if (S.screen === 'round') return renderRoundIntro();
+    if (S.screen === 'q') return [renderInsp, renderBug, renderBuzz][S.r]();
+    if (S.screen === 'final') return renderFinal();
+  };
+
+  const CAR_SVG = `<svg class="car" viewBox="0 0 220 120" aria-hidden="true">
+      <rect x="0" y="104" width="220" height="10" rx="5" fill="#18223D"/>
+      <rect x="10" y="106" width="30" height="6" fill="#FFCE3A"/><rect x="70" y="106" width="30" height="6" fill="#FFCE3A"/><rect x="130" y="106" width="30" height="6" fill="#FFCE3A"/><rect x="190" y="106" width="22" height="6" fill="#FFCE3A"/>
+      <path d="M22 84 L30 60 Q34 50 46 48 L72 46 L96 24 Q102 18 112 18 L150 18 Q160 18 166 26 L184 48 L196 52 Q206 56 206 68 L206 84 Z" fill="#FF6B57" stroke="#18223D" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M104 28 L150 28 Q156 28 160 34 L172 48 L90 48 Z" fill="#DDEEFF" stroke="#18223D" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="128" y1="28" x2="128" y2="48" stroke="#18223D" stroke-width="3"/>
+      <circle cx="62" cy="86" r="17" fill="#18223D"/><circle cx="62" cy="86" r="7" fill="#FFCE3A"/>
+      <circle cx="170" cy="86" r="17" fill="#18223D"/><circle cx="170" cy="86" r="7" fill="#FFCE3A"/>
+      <rect x="196" y="60" width="10" height="8" rx="3" fill="#FFCE3A"/>
+      <g transform="translate(150 -4) rotate(12)"><rect x="0" y="0" width="58" height="26" rx="8" fill="#22C55E" stroke="#18223D" stroke-width="3"/><path d="M14 13 l7 7 l14 -14" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>`;
+
+  const renderIntro = () => {
+    stopTimer();
+    stage.innerHTML = `
+      <div class="hero"><div>
+        <div class="eyebrow">Warm-up · 3 rounds · 2 teams</div>
+        <h2 class="hero-title">Test <span>Drive</span></h2>
+        <p class="lead-p">Before any car, phone or app reaches a customer, someone tests it. Today that’s you! Inspect products, hunt bugs in our Math Quiz game and beat the buzzer.</p>
+      </div>${CAR_SVG}</div>
+      <div class="rounds-list">${ROUNDS.map(R => `<div class="rcard ${R.cls}"><em>${R.tag} · ${R.count}</em><b>${R.name}</b><span>${R.blurb}</span></div>`).join('')}</div>
+      <div class="names">
+        <label for="nameA">Team 1 name<input id="nameA" maxlength="18" value="${esc(S.names.a)}"></label>
+        <label for="nameB">Team 2 name<input id="nameB" maxlength="18" value="${esc(S.names.b)}"></label>
+      </div>
+      <div class="spacer"></div>
+      <div class="row"><button class="btn go big" id="startBtn">Start the engine ▸</button></div>`;
+    const upd = () => { S.names.a = $('nameA').value.trim() || 'Team Alpha'; S.names.b = $('nameB').value.trim() || 'Team Beta'; paintScores(); };
+    $('nameA').addEventListener('input', upd); $('nameB').addEventListener('input', upd);
+    $('startBtn').onclick = () => { sfx.horn(); upd(); S.screen = 'round'; S.r = 0; render(); };
+  };
+
+  const renderRoundIntro = () => {
+    stopTimer();
+    const R = ROUNDS[S.r];
+    const starter = S.r === 0 ? 'a' : (S.score.a === S.score.b ? (S.r % 2 ? 'b' : 'a') : (S.score.a < S.score.b ? 'a' : 'b'));
+    const who = S.r === 2 ? `Buzzers: ${esc(S.names.a)} press <b>A</b>, ${esc(S.names.b)} press <b>L</b> (or tap the buttons)` : `${esc(S.names[starter])} goes first${S.r ? ' (the team behind starts)' : ''}`;
+    stage.innerHTML = `<div class="center">
+      <span class="tag" style="background:${R.bg}; color:${R.ink}">${R.tag}</span>
+      <div class="bignum" style="color:${R.bg}">${S.r + 1}</div>
+      <h2>${R.name}</h2><p>${R.blurb}</p>
+      <p style="font-weight:800; color:var(--ink); margin-top:-4px">${R.count} · ${R.pts} points each${R.time ? ` · ${R.time}s per turn` : ''}</p>
+      <p style="font-weight:800; margin-top:-8px; color:var(--muted)">${who}</p>
+      <button class="btn go big" id="goBtn">Let’s go ▸</button></div>`;
+    $('goBtn').onclick = () => {
+      sfx.click(); S.screen = 'q'; S.i = 0; S.turn = S.firstTurn = starter; S.steal = false; S.done = false; S.buzzed = null; S.locked = [];
+      S.order = S.r === 0 ? shuffle(TESTS) : S.r === 1 ? BUGS.slice() : shuffle(FACTS);
+      render();
+    };
+    $('goBtn').focus();
+  };
+
+  const head = (R, countTxt, withTimer = true) => `
+    <div class="qhead"><div>
+      <span class="tag" style="background:${R.bg}; color:${R.ink}">${R.tag}</span><span class="ptbadge">+${R.pts}</span>
+      <h2>${R.name}</h2><div class="count">${countTxt}</div></div>${withTimer ? timerHTML() : ''}</div>`;
+  const nextLabel = last => last ? (S.r === ROUNDS.length - 1 ? 'See the winners ▸' : 'Next round ▸') : 'Next ▸';
+  const advance = last => {
+    sfx.click(); stopTimer();
+    if (!last) { S.i++; S.firstTurn = other(S.firstTurn); S.turn = S.firstTurn; S.steal = false; S.done = false; S.buzzed = null; S.locked = []; }
+    else if (S.r < ROUNDS.length - 1) { S.r++; S.screen = 'round'; }
+    else S.screen = 'final';
+    render();
+  };
+  const finish = (ok, why, who) => {
+    S.done = true; stopTimer(); refreshTurnBar();
+    stage.querySelectorAll('.bin, .ln, .tfb, .buzz').forEach(b => b.disabled = true);
+    $('explain').innerHTML = `<div class="explain ${ok ? 'ok' : 'no'}"><b>${ok ? 'Correct!' : (who || 'Nobody got it.')}</b>${why}</div>`;
+    $('nextBtn').hidden = false; $('nextBtn').focus({ preventScroll:true });
+  };
+  const score = (pts, label) => { addPts(S.turn, pts); sfx.good(); burst(70); toast(`+${pts} ${S.names[S.turn]}${label ? ' · ' + label : ''}`, teamColor(S.turn)); };
+
+  /* ----- Round 1: Inspection Line ----- */
+  const renderInsp = () => {
+    const R = ROUNDS[0], it = S.order[S.i], last = S.i === S.order.length - 1;
+    stage.innerHTML = head(R, `Product ${S.i + 1} of ${S.order.length}`) + turnBar() + `
+      <div class="product"><div class="ic">${I[it.ic]}</div><div><small>${esc(it.what)} · test</small><p>${esc(it.t)}</p></div></div>
+      <p style="margin:0 0 12px; font-weight:800; color:var(--muted)">This test checks the product’s…</p>
+      <div class="bins">${BINS.map(b => `<button class="bin ${b.id}" data-b="${b.id}">${b.icon}${b.name}<small>${b.sub}</small></button>`).join('')}</div>
+      <div id="explain"></div><div class="spacer"></div>
+      <div class="foot"><span class="hint">Wrong answer? The other team can steal for half points.</span><button class="btn ink" id="nextBtn" hidden>${nextLabel(last)}</button></div>`;
+    stage.querySelectorAll('.bin').forEach(btn => btn.onclick = () => {
+      if (S.done) return;
+      if (btn.dataset.b === it.a) {
+        btn.classList.add('right'); stage.querySelectorAll(`.bin:not([data-b="${it.a}"]):not(.wrong)`).forEach(x => x.classList.add('dim'));
+        score(S.steal ? R.pts / 2 : R.pts); finish(true, it.why);
+      } else {
+        btn.classList.add('wrong'); btn.disabled = true; sfx.bad();
+        if (!S.steal) { S.steal = true; S.turn = other(S.turn); sfx.steal(); refreshTurnBar(); startTimer(Math.round(R.time / 2)); }
+        else { stage.querySelector(`.bin[data-b="${it.a}"]`).classList.add('right'); finish(false, it.why); }
+      }
+    });
+    $('nextBtn').onclick = () => advance(last);
+    startTimer(R.time);
+  };
+
+  /* ----- Round 2: Bug Hunt ----- */
+  const renderBug = () => {
+    const R = ROUNDS[1], it = S.order[S.i], last = S.i === S.order.length - 1;
+    stage.innerHTML = head(R, `Snippet ${S.i + 1} of ${S.order.length}`) + turnBar() + `
+      <div class="hunt">
+        <div><span class="filetab">math_quiz.py</span>
+          <div class="codebox" id="codebox">${it.lines.map((l, n) => `<button class="ln" data-n="${n}"><span class="no">${n + 1}</span><span class="src">${hl(l) || ' '}</span></button>`).join('')}</div>
+        </div>
+        <div class="mission">
+          <span class="bugcount">${I.bug} 1 bug hiding here</span>
+          <h3>${esc(it.title)}</h3>
+          <p>${esc(it.goal)}</p>
+          <span class="want">Tap the line that stops the code from doing this.</span>
+        </div>
+      </div>
+      <div id="explain"></div><div class="spacer"></div>
+      <div class="foot"><span class="hint">Read each line like a tester: does it do what the goal says?</span><button class="btn ink" id="nextBtn" hidden>${nextLabel(last)}</button></div>`;
+    const showFix = () => {
+      const n = it.bug[0], el = stage.querySelector(`.ln[data-n="${n}"]`);
+      el.insertAdjacentHTML('afterend', `<div class="ln fixline"><span class="no">✓</span><span class="src">${hl(it.fix)}</span></div>`);
+    };
+    stage.querySelectorAll('.ln[data-n]').forEach(btn => btn.onclick = () => {
+      if (S.done) return;
+      const n = +btn.dataset.n;
+      if (it.bug.includes(n)) {
+        it.bug.forEach(b => stage.querySelector(`.ln[data-n="${b}"]`).classList.add('found'));
+        sfx.squash(); score(S.steal ? R.pts / 2 : R.pts, 'bug squashed'); showFix(); finish(true, it.why);
+      } else {
+        btn.classList.add('miss'); btn.disabled = true; sfx.bad();
+        if (!S.steal) { S.steal = true; S.turn = other(S.turn); sfx.steal(); refreshTurnBar(); startTimer(Math.round(R.time / 2)); }
+        else { it.bug.forEach(b => stage.querySelector(`.ln[data-n="${b}"]`).classList.add('found')); showFix(); finish(false, it.why); }
+      }
+    });
+    $('nextBtn').onclick = () => advance(last);
+    startTimer(R.time);
+  };
+
+  /* ----- Round 3: Buzzer Blitz ----- */
+  const renderBuzz = () => {
+    const R = ROUNDS[2], it = S.order[S.i], last = S.i === S.order.length - 1;
+    const bar = S.buzzed
+      ? turnBar()
+      : `<div class="turnbar both" id="turnbar"><span>Read it out loud… first team to buzz answers!</span></div>`;
+    stage.innerHTML = head(R, `Statement ${S.i + 1} of ${S.order.length}`, false) + bar + `
+      <div class="statement"><small>True or false?</small><p>${it.t}</p></div>
+      <div class="buzzers">
+        <button class="buzz a ${S.buzzed === 'a' ? 'hit' : ''}" id="buzzA" ${S.buzzed || S.locked.includes('a') ? 'disabled' : ''}>${esc(S.names.a)}<small>BUZZ · key <kbd>A</kbd></small></button>
+        <button class="buzz b ${S.buzzed === 'b' ? 'hit' : ''}" id="buzzB" ${S.buzzed || S.locked.includes('b') ? 'disabled' : ''}>${esc(S.names.b)}<small>BUZZ · key <kbd>L</kbd></small></button>
+      </div>
+      <div class="tf" id="tf" ${S.buzzed ? '' : 'hidden'}>
+        <button class="tfb t" data-v="1">TRUE</button><button class="tfb f" data-v="0">FALSE</button>
+      </div>
+      <div id="explain"></div><div class="spacer"></div>
+      <div class="foot"><span class="hint">Wrong answer? The other team gets the question.</span>
+        <div class="row"><button class="btn ghost" id="revealBtn">Reveal answer</button><button class="btn ink" id="nextBtn" hidden>${nextLabel(last)}</button></div></div>`;
+    $('buzzA').onclick = () => buzz('a');
+    $('buzzB').onclick = () => buzz('b');
+    stage.querySelectorAll('.tfb').forEach(btn => btn.onclick = () => {
+      if (S.done || !S.buzzed) return;
+      const ok = (btn.dataset.v === '1') === it.a;
+      if (ok) { btn.classList.add('right'); S.turn = S.buzzed; score(R.pts); $('revealBtn').remove(); finish(true, it.why); }
+      else {
+        btn.classList.add('wrong'); sfx.bad(); S.locked.push(S.buzzed);
+        if (S.locked.length < 2) { S.buzzed = other(S.buzzed); S.turn = S.buzzed; S.steal = false; sfx.steal(); setTimeout(renderBuzz, 700); }
+        else { stage.querySelector(`.tfb[data-v="${it.a ? 1 : 0}"]`).classList.add('right'); $('revealBtn').remove(); finish(false, it.why); }
+      }
+    });
+    $('revealBtn').onclick = () => {
+      if (S.done) return;
+      $('tf').hidden = false; stage.querySelector(`.tfb[data-v="${it.a ? 1 : 0}"]`).classList.add('right');
+      $('revealBtn').remove(); finish(false, it.why, `It’s ${it.a ? 'TRUE' : 'FALSE'}.`);
+    };
+    $('nextBtn').onclick = () => advance(last);
+    paintScores();
+  };
+  const buzz = t => {
+    if (S.screen !== 'q' || S.r !== 2 || S.done || S.buzzed || S.locked.includes(t)) return;
+    S.buzzed = t; S.turn = t; sfx.buzz(); renderBuzz(); paintScores();
+  };
+  addEventListener('keydown', e => {
+    if (e.target && e.target.tagName === 'INPUT') return;
+    const k = e.key.toLowerCase();
+    if (k === 'a') buzz('a');
+    if (k === 'l') buzz('b');
+  });
+
+  /* ----- Final ----- */
+  const renderFinal = () => {
+    stopTimer(); paintScores();
+    const { a, b } = S.score, tie = a === b, win = a > b ? 'a' : 'b';
+    stage.innerHTML = `<div class="center">
+      <div class="eyebrow">Test drive complete</div>
+      <h2>${tie ? 'It’s a tie! Both teams pass inspection.' : esc(S.names[win]) + ' wins the Test Drive!'}</h2>
+      <div class="podium">
+        <div class="pod a ${!tie && win === 'a' ? 'win' : ''}">${!tie && win === 'a' ? '<span class="crown">Chief testers</span>' : ''}<div class="n">${esc(S.names.a)}</div><div class="s">${a}</div></div>
+        <div class="pod b ${!tie && win === 'b' ? 'win' : ''}">${!tie && win === 'b' ? '<span class="crown">Chief testers</span>' : ''}<div class="n">${esc(S.names.b)}</div><div class="s">${b}</div></div>
+      </div>
+      <div class="bridge"><b>Today’s mission</b>You found bugs just by reading the code. Real engineers go further: they write <b>test cases</b> with inputs and expected outputs, and even let Python run the tests for them. Let’s test our Math Quiz game!</div>
+      <div class="row" style="justify-content:center; margin-top:12px"><button class="btn ghost" id="againBtn">Play again</button></div>
+    </div>`;
+    sfx.fanfare(); burst(160); setTimeout(() => burst(120, innerWidth * .25, innerHeight * .4), 500); setTimeout(() => burst(120, innerWidth * .75, innerHeight * .4), 900);
+    $('againBtn').onclick = reset;
+  };
+
+  const reset = () => { Object.assign(S, { screen:'intro', r:0, i:0, turn:'a', steal:false, done:false, score:{a:0,b:0}, buzzed:null, locked:[] }); render(); };
+
+  /* ---------- Wiring ---------- */
+  $('soundBtn').onclick = () => { S.sound = !S.sound; soundIcon(); };
+  $('fsBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
+  $('homeBtn').onclick = () => {
+    const hb = $('homeBtn');
+    if (S.screen === 'intro' || hb.dataset.arm) { delete hb.dataset.arm; hb.style.borderColor = ''; reset(); return; }
+    hb.dataset.arm = 1; hb.title = 'Click again to restart'; hb.style.borderColor = 'var(--bad)';
+    setTimeout(() => { delete hb.dataset.arm; hb.style.borderColor = ''; hb.title = 'Restart game'; }, 2500);
+  };
+  soundIcon(); render();
+})();
+</script>
+</body>
+</html>
